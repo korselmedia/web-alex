@@ -210,6 +210,8 @@ section {
 
 .artist-card {
     background: var(--card-bg);
+    background-size: cover;
+    background-position: center;
     border-radius: var(--borders-radius-md);
     overflow: hidden;
     position: relative;
@@ -229,7 +231,7 @@ section {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0.6;
+    opacity: 0;
     transition: var(--transition-smooth);
     pointer-events: none;
     /* Allows hover on artist-card */
@@ -242,6 +244,7 @@ section {
     top: 0;
     left: 0;
     overflow: hidden;
+    z-index: 1;
 }
 
 .artist-card:hover video,
@@ -257,6 +260,7 @@ section {
     padding: 2rem;
     background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
     pointer-events: none;
+    z-index: 2;
 }
 
 .artist-info h3 {
@@ -482,6 +486,6 @@ footer {
 
     .parallax-divider {
         background-attachment: scroll;
-        /* Better for mobile */
+        background-position: center 0;
     }
 }
