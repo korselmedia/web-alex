@@ -18,10 +18,29 @@
     <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600;800&display=swap"
         rel="stylesheet">
 
+    <!-- Mobile Performance -->
+    <link rel="preconnect" href="https://player.vimeo.com">
+    <link rel="preconnect" href="https://i.vimeocdn.com">
+    <link rel="icon" type="image/x-icon" href="alex-foto.jpg">
+
+    <!-- SEO & Social Media -->
+    <meta property="og:title" content="ALEX BALTAR | Cinematic Video & Art Direction">
+    <meta property="og:description"
+        content="Professional Art Director and Filmmaker from Barcelona. Specializing in high-quality multicam video production, electronic music events, and cinematic style.">
+    <meta property="og:image" content="fotos-publico/DSC00478.webp">
+    <meta property="og:url" content="https://alexbaltar.com/">
+    <meta property="og:type" content="website">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ALEX BALTAR | Cinematic Video & Art Direction">
+    <meta name="twitter:description"
+        content="Professional Art Director and Filmmaker from Barcelona. Specializing in high-quality multicam video production, electronic music events, and cinematic style.">
+    <meta name="twitter:image" content="fotos-publico/DSC00478.webp">
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
     <!-- Vimeo Player API -->
-    <script src="https://player.vimeo.com/api/player.js"></script>
+    <script src="https://player.vimeo.com/api/player.js" defer></script>
 </head>
 
 <body>
@@ -120,22 +139,22 @@
     <section id="services" style="background: #111;">
         <h2 class="section-title">Services</h2>
         <div class="services-container">
-            <div class="service-item" onclick="window.location.href='#contact'" style="cursor: pointer;">
+            <div class="service-item" data-target="#contact">
                 <div class="service-icon">🎬</div>
                 <h3>Multicam Video</h3>
                 <p>Full set recording using multiple professional camera angles for a true cinematic experience.</p>
             </div>
-            <div class="service-item" onclick="window.location.href='#contact'" style="cursor: pointer;">
+            <div class="service-item" data-target="#contact">
                 <div class="service-icon">📹</div>
                 <h3>Standard Set</h3>
                 <p>High-quality audio and video recording for standard setups and smaller venues.</p>
             </div>
-            <div class="service-item" onclick="window.location.href='#contact'" style="cursor: pointer;">
+            <div class="service-item" data-target="#contact">
                 <div class="service-icon">⚡</div>
                 <h3>Fast Delivery</h3>
                 <p>Guaranteed delivery of the finished work within 24 to 72 hours.</p>
             </div>
-            <div class="service-item" onclick="window.location.href='#contact'" style="cursor: pointer;">
+            <div class="service-item" data-target="#contact">
                 <div class="service-icon">👤</div>
                 <h3>Personal Operation</h3>
                 <p>Every project is personally managed and operated by Alex Baltar on-site.</p>
@@ -152,21 +171,23 @@
         <div class="gallery-grid" id="gallery-container">
             <!-- Images will be injected by JS or hardcoded -->
             <div class="gallery-item"><img src="fotos-publico/DSC00478.webp"
-                    alt="Art Direction and Stage Design for Music Events"></div>
+                    alt="Art Direction and Stage Design for Music Events" loading="lazy" width="800" height="600"></div>
             <div class="gallery-item"><img src="fotos-publico/DSC00038.webp"
-                    alt="Alex Baltar setting up professional camera equipment"></div>
+                    alt="Alex Baltar setting up professional camera equipment" loading="lazy" width="800" height="600">
+            </div>
             <div class="gallery-item"><img src="fotos-publico/DSC07282.webp"
-                    alt="Live Event Cinematography at Music Festival"></div>
+                    alt="Live Event Cinematography at Music Festival" loading="lazy" width="800" height="600"></div>
             <div class="gallery-item"><img src="fotos-publico/DSC05093.webp"
-                    alt="Behind the scenes multicam video production"></div>
+                    alt="Behind the scenes multicam video production" loading="lazy" width="800" height="600"></div>
             <div class="gallery-item"><img src="fotos-publico/DSC02262.webp"
-                    alt="Crowd interaction during live concert recording"></div>
+                    alt="Crowd interaction during live concert recording" loading="lazy" width="800" height="600"></div>
             <div class="gallery-item"><img src="fotos-publico/DSC09491.webp"
-                    alt="Cinematic lighting and stage effects capturing"></div>
+                    alt="Cinematic lighting and stage effects capturing" loading="lazy" width="800" height="600"></div>
             <div class="gallery-item"><img src="fotos-publico/DSC01835.webp"
-                    alt="DJ performing at mainstage event video"></div>
+                    alt="DJ performing at mainstage event video" loading="lazy" width="800" height="600"></div>
             <div class="gallery-item"><img src="fotos-publico/DSC00417.webp"
-                    alt="Close-up professional video recording by Alex Baltar"></div>
+                    alt="Close-up professional video recording by Alex Baltar" loading="lazy" width="800" height="600">
+            </div>
         </div>
     </section>
 
@@ -198,7 +219,7 @@
     </footer>
 
     <!-- Custom Script -->
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
 
     <!-- Cookie Banner -->
     <div id="cookie-banner" class="cookie-banner">

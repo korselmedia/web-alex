@@ -1,38 +1,73 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- Vimeo Player Initialization (Immediate for Previews) ---
+    // --- Dynamic Copyright ---
+    const copyright = document.querySelector('.copyright');
+    if (copyright) {
+        copyright.innerHTML = `&copy; ${new Date().getFullYear()} ALEX BALTAR. ALL RIGHTS RESERVED.`;
+    }
+
+    // --- Vimeo Player Initialization (Lazy Init on interaction) ---
     const artistCards = document.querySelectorAll('.artist-card');
 
     artistCards.forEach(card => {
         const vimeoId = card.getAttribute('data-vimeo-id');
         const vimeoWrapper = card.querySelector('.vimeo-wrapper');
+        let playerInstance = null;
 
         if (vimeoId && vimeoWrapper) {
-            const player = new Vimeo.Player(vimeoWrapper, {
-                id: vimeoId,
-                background: true,
-                autoplay: true,
-                loop: true,
-                muted: true,
-                responsive: true
-            });
-
-            card.addEventListener('mouseenter', () => {
-                player.play();
-            });
-
-            card.addEventListener('mouseleave', () => {
-                player.pause();
-                player.setMuted(true); // Reset to muted when leaving
-            });
+            // Initial poster state (vumbnail)
+            vimeoWrapper.style.backgroundImage = `url(https://vumbnail.com/${vimeoId}.jpg)`;
+            vimeoWrapper.style.backgroundSize = 'cover';
+            vimeoWrapper.style.backgroundPosition = 'center';
 
             card.addEventListener('click', () => {
-                // Toggle mute/unmute on click
-                player.getMuted().then(muted => {
-                    player.setMuted(!muted);
+                if (playerInstance) {
+                    // Toggle sound on subsequent clicks
+                    playerInstance.getMuted().then(muted => {
+                        playerInstance.setMuted(!muted);
+                    });
+                    return;
+                }
+
+                // First click: Lazy init
+                vimeoWrapper.style.backgroundImage = 'none';
+                const isMobile = window.innerWidth < 768;
+
+                playerInstance = new Vimeo.Player(vimeoWrapper, {
+                    id: vimeoId,
+                    background: true,
+                    autoplay: true,
+                    loop: true,
+                    muted: false, // Unmuted on interaction as it's a click
+                    responsive: true,
+                    quality: isMobile ? '540p' : '720p'
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    if (playerInstance) {
+                        playerInstance.pause();
+                        playerInstance.setMuted(true);
+                    }
+                });
+
+                card.addEventListener('mouseenter', () => {
+                    if (playerInstance) {
+                        playerInstance.play();
+                    }
                 });
             });
         }
+    });
+
+    // --- Service Item Link Handling (Refactored from inline) ---
+    document.querySelectorAll('.service-item').forEach(item => {
+        item.style.cursor = 'pointer';
+        item.addEventListener('click', () => {
+            const target = item.getAttribute('data-target');
+            if (target) {
+                document.querySelector(target).scrollIntoView({ behavior: 'smooth' });
+            }
+        });
     });
 
     // --- Navigation & UI ---
@@ -46,6 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // --- Intersection Observer for Reveal Animations ---
     const observerOptions = {
         threshold: 0.1,
         rootMargin: "0px 0px -50px 0px"
@@ -67,6 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
         observer.observe(el);
     });
 
+    // --- Navbar transparency on scroll ---
     const nav = document.querySelector('nav');
     window.addEventListener('scroll', () => {
         if (window.scrollY > 50) {
@@ -78,6 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // --- Cookie Banner Logic ---
     const cookieBanner = document.getElementById('cookie-banner');
     const acceptCookiesBtn = document.getElementById('accept-cookies');
 
