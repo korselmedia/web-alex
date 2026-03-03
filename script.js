@@ -25,6 +25,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             card.addEventListener('mouseleave', () => {
                 player.pause();
+                player.setMuted(true); // Reset to muted when leaving
+            });
+
+            card.addEventListener('click', () => {
+                // Toggle mute/unmute on click
+                player.getMuted().then(muted => {
+                    player.setMuted(!muted);
+                });
             });
         } else if (localVideo) {
             // Standard Local Video handling
