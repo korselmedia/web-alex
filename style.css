@@ -210,8 +210,6 @@ section {
 
 .artist-card {
     background: var(--card-bg);
-    background-size: cover;
-    background-position: center;
     border-radius: var(--borders-radius-md);
     overflow: hidden;
     position: relative;
@@ -231,7 +229,7 @@ section {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0;
+    opacity: 0.6;
     transition: var(--transition-smooth);
     pointer-events: none;
     /* Allows hover on artist-card */
@@ -486,6 +484,5 @@ footer {
 
     .parallax-divider {
         background-attachment: scroll;
-        background-position: center 0;
     }
 }
