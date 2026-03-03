@@ -1,84 +1,38 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- Performance-optimized Video Lazy Loading ---
+    // --- Vimeo Player Initialization (Immediate for Previews) ---
     const artistCards = document.querySelectorAll('.artist-card');
 
     artistCards.forEach(card => {
         const vimeoId = card.getAttribute('data-vimeo-id');
         const vimeoWrapper = card.querySelector('.vimeo-wrapper');
-        let player = null;
 
-        const initPlayer = () => {
-            if (player || !vimeoId || !vimeoWrapper) return;
-
-            player = new Vimeo.Player(vimeoWrapper, {
+        if (vimeoId && vimeoWrapper) {
+            const player = new Vimeo.Player(vimeoWrapper, {
                 id: vimeoId,
                 background: true,
-                autoplay: false,
+                autoplay: true,
                 loop: true,
                 muted: true,
                 responsive: true
             });
 
-            // Auto-play when initialized (since it's triggered by interaction)
-            player.play();
-        };
-
-        card.addEventListener('mouseenter', () => {
-            if (!player) {
-                initPlayer();
-            } else {
+            card.addEventListener('mouseenter', () => {
                 player.play();
-            }
-        });
+            });
 
-        card.addEventListener('mouseleave', () => {
-            if (player) {
+            card.addEventListener('mouseleave', () => {
                 player.pause();
-                player.setMuted(true);
-            }
-        });
+                player.setMuted(true); // Reset to muted when leaving
+            });
 
-        card.addEventListener('click', (e) => {
-            if (!player) {
-                initPlayer();
-            } else {
+            card.addEventListener('click', () => {
+                // Toggle mute/unmute on click
                 player.getMuted().then(muted => {
                     player.setMuted(!muted);
                 });
-            }
-        });
-    });
-
-    // --- Optimized Parallax for Mobile & Desktop ---
-    const parallaxDividers = document.querySelectorAll('.parallax-divider');
-    const isMobile = window.innerWidth <= 768;
-
-    const updateParallax = () => {
-        const scrolled = window.scrollY;
-
-        parallaxDividers.forEach(divider => {
-            const rect = divider.getBoundingClientRect();
-            const offsetTop = rect.top + scrolled;
-
-            // Check if element is in viewport
-            if (rect.top < window.innerHeight && rect.bottom > 0) {
-                const speed = 0.4;
-                const yPos = (scrolled - offsetTop) * speed;
-
-                // On mobile we use transform for better performance than background-position
-                if (isMobile) {
-                    divider.style.backgroundPosition = `center ${yPos}px`;
-                } else {
-                    // Desktop can use background-attachment: fixed or manual position
-                    divider.style.backgroundPosition = `center ${yPos}px`;
-                }
-            }
-        });
-    };
-
-    window.addEventListener('scroll', () => {
-        requestAnimationFrame(updateParallax);
+            });
+        }
     });
 
     // --- Navigation & UI ---
