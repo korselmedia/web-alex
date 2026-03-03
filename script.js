@@ -5,10 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const setInteraction = () => {
         if (userHasInteracted) return;
         userHasInteracted = true;
-        console.log("User interacted - Hover videos enabled");
-        // We don't remove listeners to capture all first-time interactions correctly
     };
-    document.addEventListener('click', setInteraction);
+    document.addEventListener('mousedown', setInteraction);
     document.addEventListener('touchstart', setInteraction);
     document.addEventListener('keydown', setInteraction);
 
@@ -18,116 +16,87 @@ document.addEventListener('DOMContentLoaded', () => {
         copyright.innerHTML = `&copy; ${new Date().getFullYear()} ALEX BALTAR. ALL RIGHTS RESERVED.`;
     }
 
-    // --- Video Modal Logic ---
-    const modal = document.getElementById('video-modal');
-    const modalContainer = document.getElementById('modal-video-container');
-    const modalClose = modal.querySelector('.modal-close');
-    const modalOverlay = modal.querySelector('.modal-overlay');
-
-    const openModal = (vimeoId) => {
-        const iframe = document.createElement('iframe');
-        // Player completo con controles y sonido
-        iframe.src = `https://player.vimeo.com/video/${vimeoId}?autoplay=1&muted=0&controls=1`;
-        iframe.allow = "autoplay; fullscreen; picture-in-picture";
-        iframe.allowFullscreen = true;
-
-        modalContainer.innerHTML = '';
-        modalContainer.appendChild(iframe);
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    };
-
-    const closeModal = () => {
-        modal.classList.remove('active');
-        modalContainer.innerHTML = '';
-        document.body.style.overflow = '';
-    };
-
-    if (modalClose) modalClose.addEventListener('click', closeModal);
-    if (modalOverlay) modalOverlay.addEventListener('click', closeModal);
-    window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.classList.contains('active')) closeModal();
-    });
-
     // --- Artist Cards Interaction ---
     const artistCards = document.querySelectorAll('.artist-card');
 
     artistCards.forEach(card => {
         const vimeoId = card.getAttribute('data-vimeo-id');
         const vimeoWrapper = card.querySelector('.vimeo-wrapper');
-        let hoverIframe = null;
+        let player = null;
 
         if (vimeoId && vimeoWrapper) {
-            // Estado inicial: Thumbnail estático
+            // Initial state: Static Thumbnail
             vimeoWrapper.style.backgroundImage = `url(https://vumbnail.com/${vimeoId}.jpg)`;
             vimeoWrapper.style.backgroundSize = 'cover';
             vimeoWrapper.style.backgroundPosition = 'center';
 
             card.addEventListener('mouseenter', () => {
                 if (!userHasInteracted) {
-                    // Zoom sutil si aún no interactuó (autoplay policy protection)
                     card.classList.add('scaling');
                     return;
                 }
 
-                // Cargar vídeo en el hover si ya interactuó
-                if (!hoverIframe) {
-                    hoverIframe = document.createElement('iframe');
-                    // Parámetros de fondo: sin controles, loop, autoplay, muted
-                    hoverIframe.src = `https://player.vimeo.com/video/${vimeoId}?background=1&autoplay=1&muted=1&loop=1&byline=0&title=0&controls=0&quality=540p`;
-                    hoverIframe.style.width = '100%';
-                    hoverIframe.style.height = '100%';
-                    hoverIframe.style.border = 'none';
-                    hoverIframe.style.opacity = '0';
-                    hoverIframe.style.transition = 'opacity 0.4s ease';
-                    hoverIframe.style.pointerEvents = 'none'; // No interfiere con el hover del card
+                if (!player) {
+                    // Initialize player on first hover AFTER interaction
+                    player = new Vimeo.Player(vimeoWrapper, {
+                        id: vimeoId,
+                        background: true, // No UI, auto-muted
+                        autoplay: true,
+                        loop: true,
+                        responsive: true,
+                        quality: '540p'
+                    });
 
-                    vimeoWrapper.appendChild(hoverIframe);
-
-                    hoverIframe.onload = () => {
-                        hoverIframe.style.opacity = '0.6';
-                    };
+                    player.on('loaded', () => {
+                        const iframe = vimeoWrapper.querySelector('iframe');
+                        if (iframe) iframe.style.opacity = '1';
+                    });
+                } else {
+                    player.play();
                 }
             });
 
             card.addEventListener('mouseleave', () => {
                 card.classList.remove('scaling');
-                if (hoverIframe) {
-                    hoverIframe.remove();
-                    hoverIframe = null;
+                if (player) {
+                    player.pause();
                 }
             });
 
             card.addEventListener('click', () => {
-                openModal(vimeoId);
+                // Click to unmute/mute inside the card
+                if (player) {
+                    player.getMuted().then(muted => {
+                        player.setMuted(!muted);
+                    });
+                }
             });
         }
     });
 
     // --- Service Item Link Handling ---
     document.querySelectorAll('.service-item').forEach(item => {
+        item.style.cursor = 'pointer';
         item.addEventListener('click', () => {
             const target = item.getAttribute('data-target');
             if (target) {
-                const targetEl = document.querySelector(target);
-                if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth' });
+                document.querySelector(target).scrollIntoView({ behavior: 'smooth' });
             }
         });
     });
 
-    // --- Navigation Smooth Scroll ---
+    // --- Navigation ---
     document.querySelectorAll('nav a').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
-            const href = this.getAttribute('href');
-            if (href.startsWith('#')) {
-                e.preventDefault();
-                const targetEl = document.querySelector(href);
-                if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth' });
-            }
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            document.querySelector(targetId).scrollIntoView({
+                behavior: 'smooth'
+            });
         });
     });
 
-    // --- Intersection Observer para Animaciones ---
+    // --- Intersection Observer for Reveal Animations ---
     const observerOptions = {
         threshold: 0.1,
         rootMargin: "0px 0px -50px 0px"
@@ -149,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
         observer.observe(el);
     });
 
-    // --- Navbar Scroll Logic ---
+    // --- Navbar transparency on scroll ---
     const nav = document.querySelector('nav');
     window.addEventListener('scroll', () => {
         if (window.scrollY > 50) {
@@ -161,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- Cookie Banner ---
+    // --- Cookie Banner Logic ---
     const cookieBanner = document.getElementById('cookie-banner');
     const acceptCookiesBtn = document.getElementById('accept-cookies');
 
